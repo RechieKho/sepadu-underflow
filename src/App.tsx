@@ -1,7 +1,12 @@
-import Counter from "./stories/Counter";
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './theme';
 
 function App() {
-  return <Counter title="Hello world"></Counter>;
+  return (
+    <ThemeProvider theme={theme}>
+      
+    </ThemeProvider>
+  );
 }
 
 export default App;
