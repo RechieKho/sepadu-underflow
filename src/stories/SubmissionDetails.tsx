@@ -25,7 +25,7 @@ const StatusChip = styled(({ status, ...props }: StatusChipProps & ChipProps) =>
     position: 'absolute',
     top: theme.spacing(2),
     right: theme.spacing(2),
-    backgroundColor: status === 'Open' ? theme.palette.success.main : status === 'In Progress' ? theme.palette.warning.main : theme.palette.error.main,
+    backgroundColor: status === 'open' ? theme.palette.success.main : status === 'in progress' ? theme.palette.warning.main : theme.palette.error.main,
     color: theme.palette.common.white,
 }));
 
