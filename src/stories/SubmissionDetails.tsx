@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Chip, Paper, ChipProps, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { User } from '../models/user';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
@@ -13,7 +14,7 @@ interface SubmissionDetailsProps {
     agency: string;
     tags: string[];
     status: string;
-    user: string;
+    user: User;
     vote: number;
     onVote: (id: string, direction: 'up' | 'down') => void;
 }
@@ -103,7 +104,7 @@ const SubmissionDetails: React.FC<SubmissionDetailsProps> = ({
                     <Typography variant="h5" gutterBottom>{subject}</Typography>
                     <Typography variant="body1"><strong>Type:</strong> {type}</Typography>
                     <Typography variant="body1"><strong>Agency:</strong> {agency}</Typography>
-                    <Typography variant="body1"><strong>User:</strong> {user}</Typography>
+                    <Typography variant="body1"><strong>User:</strong> {user.getDisplayName()}</Typography>
                     <br/>
                     <Typography variant="body1">{body}</Typography>
                     <Box mt={2}>

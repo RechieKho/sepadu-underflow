@@ -2,6 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import SubmissionDetails from './SubmissionDetails';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '.././theme';
+import { User } from '../models/user';
+
+const user = new User('123456', 'SSYOK', '1234567890', 'ssyok@example.com', 'community', 'https://example.com/avatar1.jpg');
 
 const meta: Meta<typeof SubmissionDetails> = {
   component: SubmissionDetails,
@@ -29,7 +32,7 @@ export const Default: Story = {
     agency: 'JPN',
     tags: ['tag1', 'tag2'],
     status: 'Open',
-    user: 'SSYOK',
+    user: user,
     vote: 5,
   },
 };
