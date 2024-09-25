@@ -6,7 +6,8 @@ import {
   Typography, 
   Avatar, 
   Paper, 
-  Divider 
+  Divider, 
+  Chip
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { User } from '../models/user';
@@ -54,6 +55,12 @@ const CommentContent = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
+const AdminChip = styled(Chip)(({ theme }) => ({
+  marginLeft: theme.spacing(1),
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+}));
+
 const getTimeAgo = (dateString: string) => {
   const date = new Date(dateString);
   const now = new Date();
@@ -74,6 +81,9 @@ const SubmissionThread: React.FC<SubmissionThreadProps> = ({ comments }) => {
               <UserInfo>
                 <Avatar src={comment.user.avatar} alt={comment.user.name} />
                 <Username variant="body1">{comment.user.name}</Username>
+                {comment.user.privilege === 'admin' && (
+                  <AdminChip label="Admin" size="small" />
+                )}
               </UserInfo>
               <TimeStamp variant="body2">
                 {getTimeAgo(comment.postedAt)}
