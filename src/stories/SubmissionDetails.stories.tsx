@@ -3,8 +3,29 @@ import SubmissionDetails from './SubmissionDetails';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '.././theme';
 import { User } from '../models/user';
+import { Submission } from '../models/submission';
 
-const user = new User('123456', 'SSYOK', '1234567890', 'ssyok@example.com', 'community', 'https://example.com/avatar1.jpg');
+const user = new User(
+  '123456', 
+  'SSYOK', 
+  '1234567890', 
+  'ssyok@example.com', 
+  'community', 
+  'https://example.com/avatar1.jpg'
+);
+
+const submission = new Submission(
+  '1',
+  'Complaint',
+  'Issue with local park',
+  'There is a lot of litter in the local park...',
+  '2024-09-20T10:30:00Z',
+  'Parks Department',
+  ['Environment', 'Cleanliness'],
+  'Open',
+  user,
+  5
+);
 
 const meta: Meta<typeof SubmissionDetails> = {
   component: SubmissionDetails,
@@ -24,15 +45,6 @@ type Story = StoryObj<typeof SubmissionDetails>;
 
 export const Default: Story = {
   args: {
-    id: "Aduan#3",
-    type: 'Aduan',
-    subject: 'Title of Subject',
-    body: 'Description of context',
-    datetime: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-    agency: 'JPN',
-    tags: ['tag1', 'tag2'],
-    status: 'Open',
-    user: user,
-    vote: 5,
+    submission: submission
   },
 };
