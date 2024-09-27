@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import SubmissionTable from "./SubmissionTable";
+import { fn } from "@storybook/test";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -45,6 +46,7 @@ const meta = {
         upvote: 10000,
       },
     ],
+    onRowClick: fn(),
   },
 } satisfies Meta<typeof SubmissionTable>;
 

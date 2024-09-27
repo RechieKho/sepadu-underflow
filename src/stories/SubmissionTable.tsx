@@ -2,6 +2,7 @@ import { Breakpoint, Chip, Paper } from "@mui/material";
 import { Container } from "@mui/system";
 import "./fonts";
 import { DataGrid, GridColDef, GridColTypeDef } from "@mui/x-data-grid";
+import React from "react";
 
 const titleColumnType: GridColTypeDef = {
   type: "string",
@@ -56,19 +57,27 @@ export interface SubmissionTableEntry {
   upvote: number;
 }
 
-export interface SubmissionTableProps {
+type SubmissionTableDataGridProps = Omit<
+  React.ComponentProps<typeof DataGrid>,
+  "rows" | "columns"
+>;
+
+export interface SubmissionTableProps extends SubmissionTableDataGridProps {
   maxWidth?: Breakpoint | false;
   entries: SubmissionTableEntry[];
 }
 
-export default function SubmissionTable({
-  maxWidth = "lg",
-  entries,
-}: SubmissionTableProps) {
+export default function SubmissionTable(props: SubmissionTableProps) {
+  const { maxWidth = "lg", entries } = props;
+
   return (
     <Container maxWidth={maxWidth}>
       <Paper variant="outlined">
-        <DataGrid columns={columns} rows={entries}></DataGrid>
+        <DataGrid
+          columns={columns}
+          rows={entries}
+          {...(props as SubmissionTableDataGridProps)}
+        ></DataGrid>
       </Paper>
     </Container>
   );
