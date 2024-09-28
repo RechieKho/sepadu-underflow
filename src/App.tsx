@@ -4,9 +4,10 @@ import Header from "./stories/Header";
 import Footer from "./stories/Footer";
 import { Container, Divider, Stack, Typography } from "@mui/material";
 import SubmissionTable from "./stories/SubmissionTable";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import UnknownPage from "./UnknownPage";
 import ViewSubmission from "./ViewSubmission";
+import Search from "./Search";
 
 const sampleEntries = [
   {
@@ -39,6 +40,8 @@ const sampleEntries = [
 ];
 
 function App() {
+  const navigate = useNavigate();
+
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth="lg">
@@ -54,7 +57,8 @@ function App() {
         >
           <Header
             onSearchRequested={(query) => {
-              console.log(`Query requested: '${query}'`);
+              if (query.length === 0) return;
+              navigate(`/search/${query}`);
             }}
           ></Header>
 
@@ -81,6 +85,7 @@ function App() {
                 path="/submission/:id"
                 element={<ViewSubmission></ViewSubmission>}
               ></Route>
+              <Route path="/search/:query" element={<Search></Search>}></Route>
               <Route path="*" element={<UnknownPage></UnknownPage>}></Route>
             </Routes>
           </Container>
