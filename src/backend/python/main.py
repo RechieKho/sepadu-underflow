@@ -174,7 +174,7 @@ async def vector_search(query: str, limit: int = 5):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/hybrid_search")
-async def vector_search(query: str, limit: int = 5):
+async def hybrid_search(query: str, limit: int = 5):
     try:
         query_embedding = generate_embedding(query)
         logger.info(f"Generated query embedding of length: {len(query_embedding)}")
