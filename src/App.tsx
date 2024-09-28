@@ -6,6 +6,7 @@ import { Container, Divider, Stack, Typography } from "@mui/material";
 import SubmissionTable from "./stories/SubmissionTable";
 import { Route, Routes } from "react-router-dom";
 import UnknownPage from "./UnknownPage";
+import ViewSubmission from "./ViewSubmission";
 
 const sampleEntries = [
   {
@@ -75,6 +76,10 @@ function App() {
                     <SubmissionTable entries={sampleEntries}></SubmissionTable>
                   </>
                 }
+              ></Route>
+              <Route
+                path="/submission/:id"
+                element={<ViewSubmission></ViewSubmission>}
               ></Route>
               <Route path="*" element={<UnknownPage></UnknownPage>}></Route>
             </Routes>
