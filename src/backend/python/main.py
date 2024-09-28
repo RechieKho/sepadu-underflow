@@ -163,12 +163,12 @@ async def add_submission(submission: Submission):
 @app.post("/add_comment")
 async def add_comment(comment: Comment):
     try:
-        posted_at = datetime.now().isoformat()
+        # posted_at = datetime.now().isoformat()
 
         comment_data = {
             "id": None,  
             "user_ic": comment.user.ic,  
-            "postedAt": posted_at,  
+            "postedAt": comment.postedAt,  
             "comment": comment.comment,
             "submission_id": comment.submission_id  
         }
