@@ -21,7 +21,8 @@
     "@types/node": "^22.7.3",
     "firebase": "^10.13.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "sepadu-underflow": "file:"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^2.0.2",
