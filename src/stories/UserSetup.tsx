@@ -1,7 +1,6 @@
 import "./fonts";
 import React, { useState } from "react";
 import {
-  Avatar,
   Typography,
   Paper,
   Divider,
@@ -9,14 +8,11 @@ import {
   Container,
   Stack,
   TextField,
-  Fab,
   Button,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { User } from "../models/user";
-import AddIcon from "@mui/icons-material/Add";
+import InputAdornment from '@mui/material/InputAdornment';
 import SendIcon from "@mui/icons-material/Send";
 
 interface UserSetupProps {
@@ -35,16 +31,49 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-const UserSetup: React.FC<UserSetupProps> = ({
-  user,
-  onSubmitRequested,
-}) => {
+const UserSetup: React.FC<UserSetupProps> = ({ user, onSubmitRequested }) => {
   const [avatar, setAvatar] = useState(user.avatar);
   const [name, setName] = useState(user.name);
   const [ic, setIc] = useState(user.ic);
   const [phoneNo, setPhoneNo] = useState(user.phoneNo);
   const [email, setEmail] = useState(user.email);
   const [privilege, setPrivilege] = useState(user.privilege);
+
+  const [IcError, setIcError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+
+  const validateIc = (ic: string): boolean => {
+    const icRegex = /^\d{12}$/;
+    return icRegex.test(ic);
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhoneNo = (phoneNo: string): boolean => {
+    const phoneRegex = /^\d{9,10}$/; 
+    return phoneRegex.test(phoneNo);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const isIcValid = validateIc(ic);
+    const isEmailValid = validateEmail(email);
+    const isPhoneValid = validatePhoneNo(phoneNo);
+
+    setIcError(!isIcValid);
+    setEmailError(!isEmailValid);
+    setPhoneError(!isPhoneValid);
+
+    if (!isIcValid || !isEmailValid || !isPhoneValid) return; 
+
+    const data = new User(ic, name, phoneNo, email, privilege, avatar);
+    onSubmitRequested(data);
+  };
 
   return (
     <StyledPaper square={false}>
@@ -63,29 +92,6 @@ const UserSetup: React.FC<UserSetupProps> = ({
           <Grid2 container spacing={2}>
             <Grid2 size={4}>
               <Typography variant="body1">
-                <strong>Avatar:</strong>
-              </Typography>
-            </Grid2>
-            {/* TODO: set avatar. */}
-            <Avatar
-              alt={name}
-              src={avatar}
-              sx={{
-                width: { xs: 170, sm: 90, md: 170 },
-                height: { xs: 170, sm: 90, md: 170 },
-                borderRadius: 2,
-              }}
-              variant="rounded"
-            />
-            <Fab sx={{ marginLeft: -6 }} color="primary" aria-label="add">
-              <AddIcon />
-            </Fab>
-          </Grid2>
-        </Stack>
-        <Stack sx={{ my: 2 }}>
-          <Grid2 container spacing={2}>
-            <Grid2 size={4}>
-              <Typography variant="body1">
                 <strong>Name:</strong>
               </Typography>
             </Grid2>
@@ -95,7 +101,6 @@ const UserSetup: React.FC<UserSetupProps> = ({
               label="Required"
               value={name}
               onChange={(e) => {
-                e.preventDefault();
                 setName(e.currentTarget.value);
               }}
             />
@@ -114,9 +119,10 @@ const UserSetup: React.FC<UserSetupProps> = ({
               label="Required"
               value={ic}
               onChange={(e) => {
-                e.preventDefault();
                 setIc(e.currentTarget.value);
               }}
+              error={IcError}
+              helperText={IcError ? "Invalid IC format" : ""}
             />
           </Grid2>
         </Stack>
@@ -131,10 +137,16 @@ const UserSetup: React.FC<UserSetupProps> = ({
               id="outlined-basic"
               variant="outlined"
               value={phoneNo}
+              slotProps={{
+                input: {
+                  startAdornment: <InputAdornment position="start"><Typography sx={{ color: "black" }}>+60</Typography></InputAdornment>,
+                },
+              }}
               onChange={(e) => {
-                e.preventDefault();
                 setPhoneNo(e.currentTarget.value);
               }}
+              error={phoneError}
+              helperText={phoneError ? "Invalid phone number" : ""}
             />
           </Grid2>
         </Stack>
@@ -150,31 +162,11 @@ const UserSetup: React.FC<UserSetupProps> = ({
               variant="outlined"
               value={email}
               onChange={(e) => {
-                e.preventDefault();
                 setEmail(e.currentTarget.value);
               }}
+              error={emailError}
+              helperText={emailError ? "Invalid email format" : ""}
             />
-          </Grid2>
-        </Stack>
-        <Stack sx={{ my: 2 }}>
-          <Grid2 container spacing={2}>
-            <Grid2 size={4}>
-              <Typography variant="body1">
-                <strong>Privilege: </strong>
-              </Typography>
-            </Grid2>
-            <Select
-              value={privilege}
-              onChange={(e) => {
-                e.preventDefault();
-                const value = e.target.value;
-                if (value !== "community" && value !== "admin") return;
-                setPrivilege(value);
-              }}
-            >
-              <MenuItem value="community">Community</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
-            </Select>
           </Grid2>
         </Stack>
         <Divider sx={{ borderBottomWidth: 3, borderColor: "gray", my: 1 }} />
@@ -186,18 +178,7 @@ const UserSetup: React.FC<UserSetupProps> = ({
           <Button
             variant="contained"
             endIcon={<SendIcon />}
-            onClick={(e) => {
-              e.preventDefault();
-              const data = new User(
-                ic,
-                name,
-                phoneNo,
-                email,
-                privilege,
-                avatar
-              );
-              onSubmitRequested(data);
-            }}
+            onClick={handleSubmit}
           >
             Submit
           </Button>
