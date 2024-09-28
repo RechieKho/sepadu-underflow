@@ -56,6 +56,7 @@ function App() {
           divider={<Divider orientation="horizontal" flexItem></Divider>}
         >
           <Header
+            onHomeRequested={() => navigate("/")}
             onSearchRequested={(query) => {
               if (query.length === 0) return;
               navigate(`/search/${query}`);

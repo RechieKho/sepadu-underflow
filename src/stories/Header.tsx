@@ -8,6 +8,7 @@ import {
   TextField,
   InputAdornment,
   IconButton,
+  ButtonBase,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -16,6 +17,7 @@ export interface HeaderProps {
   title?: string;
   aside?: string;
   onSearchRequested: (query: string) => void;
+  onHomeRequested: () => void;
 }
 
 export default function Header({
@@ -23,6 +25,7 @@ export default function Header({
   title = "SEPADU",
   aside = "Jambatan Perkhidmatan Awam",
   onSearchRequested,
+  onHomeRequested,
 }: HeaderProps) {
   const [query, setQuery] = useState("");
 
@@ -35,7 +38,15 @@ export default function Header({
           alignItems: "center",
         }}
       >
-        <Typography>{title}</Typography>
+        <ButtonBase
+          onClick={() => onHomeRequested()}
+          sx={{
+            p: 0.5,
+            borderRadius: 0.5,
+          }}
+        >
+          <Typography>{title}</Typography>
+        </ButtonBase>
         <Stack
           direction="row"
           sx={{

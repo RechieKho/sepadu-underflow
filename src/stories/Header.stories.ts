@@ -10,6 +10,7 @@ const meta = {
   tags: ["autodocs"],
   args: {
     onSearchRequested: fn(),
+    onHomeRequested: fn(),
   },
 } satisfies Meta<typeof Header>;
 
