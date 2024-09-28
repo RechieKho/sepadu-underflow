@@ -208,7 +208,7 @@ async def hybrid_search(query: str, limit: int = 5):
 
         return submissions
     except Exception as e:
-        logger.error(f"Error performing vector search: {str(e)}", exc_info=True)
+        logger.error(f"Error performing hybrid search: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
