@@ -2,7 +2,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import Header from "./stories/Header";
 import Footer from "./stories/Footer";
-import { Box, Container, Divider, Stack, Typography } from "@mui/material";
+import { Container, Divider, Stack, Typography } from "@mui/material";
 import SubmissionTable from "./stories/SubmissionTable";
 
 const sampleEntries = [
