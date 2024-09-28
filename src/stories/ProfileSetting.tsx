@@ -42,54 +42,6 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
   return (
     <StyledPaper square={false}>
       <StyledContainer
-        sx={{
-          borderRadius: 3,
-          padding: 3,
-          boxShadow: 3,
-          maxWidth: 1000,
-          marginBottom: 4,
-        }}
-      >
-        <Grid2 container spacing={2} alignItems="center">
-          {/* Avatar and name */}
-          <Grid2 size={{ xs: 12, sm: 3 }}>
-            <Avatar
-              alt={user.name}
-              src={user.avatar}
-              sx={{
-                width: { xs: 170, sm: 90, md: 170 },
-                height: { xs: 170, sm: 90, md: 170 },
-                borderRadius: 2,
-              }}
-              variant="rounded"
-            />
-          </Grid2>
-
-          {/* Name and location */}
-          <Grid2 size={{ xs: 12, sm: 4 }}>
-            <StyledTypographyHeader
-              variant="h5"
-              sx={{ fontWeight: "bold" }}
-              gutterBottom
-            >
-              {user.name}
-            </StyledTypographyHeader>
-            <StyledTypographyHeader variant="subtitle1">
-              <strong>IC Number: </strong> {user.ic}
-            </StyledTypographyHeader>
-            <StyledTypographyHeader variant="subtitle2">
-              <strong>Phone Number: </strong>
-              {user.phoneNo}
-            </StyledTypographyHeader>
-            <StyledTypographyHeader variant="subtitle2">
-              <strong>Email: </strong>
-              {user.email}
-            </StyledTypographyHeader>
-          </Grid2>
-        </Grid2>
-      </StyledContainer>
-
-      <StyledContainer
         sx={{ borderRadius: 3, padding: 3, boxShadow: 3, maxWidth: 1000 }}
       >
         <Stack>
