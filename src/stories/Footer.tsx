@@ -15,7 +15,13 @@ export default function Footer({
 }: FooterProps) {
   return (
     <Container maxWidth={maxWidth}>
-      <Stack direction="column" alignItems="center">
+      <Stack
+        direction="column"
+        alignItems="center"
+        sx={{
+          p: 3,
+        }}
+      >
         <Typography>
           Copyright &copy; {copyrightYear} {agencyName}
         </Typography>

@@ -45,7 +45,7 @@ export default function Header({
         >
           <TextField
             sx={{
-              mr: 3,
+              mx: 3,
             }}
             label="Search"
             value={query}
