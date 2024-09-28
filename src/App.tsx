@@ -4,6 +4,8 @@ import Header from "./stories/Header";
 import Footer from "./stories/Footer";
 import { Container, Divider, Stack, Typography } from "@mui/material";
 import SubmissionTable from "./stories/SubmissionTable";
+import { Route, Routes } from "react-router-dom";
+import UnknownPage from "./UnknownPage";
 
 const sampleEntries = [
   {
@@ -62,10 +64,20 @@ function App() {
               flexGrow: 1,
             }}
           >
-            <Typography variant="h6">Your submission</Typography>
-            <SubmissionTable entries={sampleEntries}></SubmissionTable>
-            <Typography variant="h6">Public submission</Typography>
-            <SubmissionTable entries={sampleEntries}></SubmissionTable>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Typography variant="h6">Your submission</Typography>
+                    <SubmissionTable entries={sampleEntries}></SubmissionTable>
+                    <Typography variant="h6">Public submission</Typography>
+                    <SubmissionTable entries={sampleEntries}></SubmissionTable>
+                  </>
+                }
+              ></Route>
+              <Route path="*" element={<UnknownPage></UnknownPage>}></Route>
+            </Routes>
           </Container>
 
           <Footer></Footer>
