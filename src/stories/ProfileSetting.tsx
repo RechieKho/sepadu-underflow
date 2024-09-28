@@ -1,5 +1,5 @@
 import "./fonts";
-import React from "react";
+import React, { useState } from "react";
 import {
   Avatar,
   Typography,
@@ -11,6 +11,8 @@ import {
   TextField,
   Fab,
   Button,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { User } from "../models/user";
@@ -20,6 +22,8 @@ import SendIcon from "@mui/icons-material/Send";
 
 interface ProfileSettingProps {
   user: User;
+  onSubmitRequested: (data: User) => void;
+  onDeleteRequested: (data: User) => void;
 }
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -28,17 +32,23 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-const StyledTypographyHeader = styled(Typography)(({ theme }) => ({
-  color: theme.palette.primary.main,
-  paddingBottom: theme.spacing(0.2),
-}));
-
 const StyledContainer = styled(Container)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   color: theme.palette.primary.main,
 }));
 
-const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
+const ProfileSetting: React.FC<ProfileSettingProps> = ({
+  user,
+  onDeleteRequested,
+  onSubmitRequested,
+}) => {
+  const [avatar, setAvatar] = useState(user.avatar);
+  const [name, setName] = useState(user.name);
+  const [ic, setIc] = useState(user.ic);
+  const [phoneNo, setPhoneNo] = useState(user.phoneNo);
+  const [email, setEmail] = useState(user.email);
+  const [privilege, setPrivilege] = useState(user.privilege);
+
   return (
     <StyledPaper square={false}>
       <StyledContainer
@@ -59,9 +69,10 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
                 <strong>Avatar:</strong>
               </Typography>
             </Grid2>
+            {/* TODO: set avatar. */}
             <Avatar
-              alt={user.name}
-              src={user.avatar}
+              alt={name}
+              src={avatar}
               sx={{
                 width: { xs: 170, sm: 90, md: 170 },
                 height: { xs: 170, sm: 90, md: 170 },
@@ -85,7 +96,11 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
               required
               id="outlined-required"
               label="Required"
-              defaultValue={user.name}
+              value={name}
+              onChange={(e) => {
+                e.preventDefault();
+                setName(e.currentTarget.value);
+              }}
             />
           </Grid2>
         </Stack>
@@ -100,7 +115,11 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
               required
               id="outlined-required"
               label="Required"
-              defaultValue={user.ic}
+              value={ic}
+              onChange={(e) => {
+                e.preventDefault();
+                setIc(e.currentTarget.value);
+              }}
             />
           </Grid2>
         </Stack>
@@ -114,7 +133,11 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
             <TextField
               id="outlined-basic"
               variant="outlined"
-              defaultValue={user.phoneNo}
+              value={phoneNo}
+              onChange={(e) => {
+                e.preventDefault();
+                setPhoneNo(e.currentTarget.value);
+              }}
             />
           </Grid2>
         </Stack>
@@ -128,7 +151,11 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
             <TextField
               id="outlined-basic"
               variant="outlined"
-              defaultValue={user.email}
+              value={email}
+              onChange={(e) => {
+                e.preventDefault();
+                setEmail(e.currentTarget.value);
+              }}
             />
           </Grid2>
         </Stack>
@@ -139,11 +166,18 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
                 <strong>Privilege: </strong>
               </Typography>
             </Grid2>
-            <TextField
-              id="outlined-basic"
-              variant="outlined"
-              defaultValue={user.privilege}
-            />
+            <Select
+              value={privilege}
+              onChange={(e) => {
+                e.preventDefault();
+                const value = e.target.value;
+                if (value !== "community" && value !== "admin") return;
+                setPrivilege(value);
+              }}
+            >
+              <MenuItem value="community">Community</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
+            </Select>
           </Grid2>
         </Stack>
         <Divider sx={{ borderBottomWidth: 3, borderColor: "gray", my: 1 }} />
@@ -152,10 +186,40 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({ user }) => {
           direction="row"
           spacing={2}
         >
-          <Button variant="outlined" startIcon={<DeleteIcon />}>
+          <Button
+            variant="outlined"
+            startIcon={<DeleteIcon />}
+            onClick={(e) => {
+              e.preventDefault();
+              const data = new User(
+                ic,
+                name,
+                phoneNo,
+                email,
+                privilege,
+                avatar
+              );
+              onDeleteRequested(data);
+            }}
+          >
             Delete
           </Button>
-          <Button variant="contained" endIcon={<SendIcon />}>
+          <Button
+            variant="contained"
+            endIcon={<SendIcon />}
+            onClick={(e) => {
+              e.preventDefault();
+              const data = new User(
+                ic,
+                name,
+                phoneNo,
+                email,
+                privilege,
+                avatar
+              );
+              onSubmitRequested(data);
+            }}
+          >
             Submit
           </Button>
         </Stack>
