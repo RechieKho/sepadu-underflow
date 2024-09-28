@@ -1,3 +1,4 @@
+import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -28,6 +29,7 @@ app.add_middleware(
 db = None
 table = None
 embedding_model = None
+comments_table = None
 
 # Pydantic models
 class User(BaseModel):
@@ -49,6 +51,12 @@ class Submission(BaseModel):
     status: str
     user: User
     vote: int
+
+class Comment(BaseModel):
+    user: User  
+    postedAt: str  
+    comment: str  
+    submission_id: str 
 
 # Initialize the embedding model
 def initialize_embedding_model():
@@ -84,7 +92,7 @@ async def submission_to_vector(submission: Submission):
 
 @app.on_event("startup")
 async def startup_event():
-    global db, table, embedding_model
+    global db, table, embedding_model, comments_table
     try:
         initialize_embedding_model()
         db = lancedb.connect("data/lancedb")
@@ -119,6 +127,22 @@ async def startup_event():
         else:
             table = db.open_table("submissions")
 
+        comments_schema = pa.schema(
+            [
+                pa.field("id", pa.int32()),  
+                pa.field("user_ic", pa.string()),  
+                pa.field("postedAt", pa.string()),  
+                pa.field("comment", pa.string()),  
+                pa.field("submission_id", pa.string())  
+            ]
+        )
+
+        # Create or open comments table
+        if "comments" not in db.table_names():
+            comments_table = db.create_table("comments", schema=comments_schema, mode="overwrite")
+        else:
+            comments_table = db.open_table("comments")
+
         logger.info("Startup completed successfully")
     except Exception as e:
         logger.error(f"Error during startup: {str(e)}")
@@ -134,6 +158,28 @@ async def add_submission(submission: Submission):
     except Exception as e:
         logger.error(f"Error adding submission: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
+    
+    
+@app.post("/add_comment")
+async def add_comment(comment: Comment):
+    try:
+        posted_at = datetime.now().isoformat()
+
+        comment_data = {
+            "id": None,  
+            "user_ic": comment.user.ic,  
+            "postedAt": posted_at,  
+            "comment": comment.comment,
+            "submission_id": comment.submission_id  
+        }
+
+        comments_table.add([comment_data])
+        logger.info(f"Comment added by user {comment.user.ic} to submission {comment.submission_id}")
+        return {"message": "Comment added successfully"}
+    except Exception as e:
+        logger.error(f"Error adding comment: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+    
 
 @app.get("/vector_search")
 async def vector_search(query: str, limit: int = 5):
