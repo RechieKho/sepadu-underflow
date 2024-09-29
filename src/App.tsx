@@ -7,8 +7,8 @@ import SubmissionTable from "./stories/SubmissionTable";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import UnknownPage from "./UnknownPage";
 import ViewSubmission from "./ViewSubmission";
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
 import VectorDBHandler from "./components/VectorDBHandler";
 import AddSubmission from "./components/AddSubmission";
 
@@ -18,33 +18,53 @@ function App() {
 
   const fetchSubmissions = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/query_by_status?status=Open');
+      const response = await axios.get(
+        "https://localhost:8000/query_by_status?status=Open"
+      );
       console.log(response.data);
-      const formattedSubmissions = response.data.map((submission: { id: any; subject: any; type: any; tags: string; status: any; datetime: string | number | Date; vote: any; agency: any; body: any; user_ic: any; user_name: any; user_phoneNo: any; user_email: any; user_privilege: any; user_avatar: any; }) => ({
-        id: submission.id,
-        title: submission.subject,
-        type: submission.type,
-        tag: submission.tags[0], // Parse the JSON string and get the first tag
-        status: submission.status,
-        date: new Date(submission.datetime),
-        upvote: submission.vote,
-        agency: submission.agency,
-        body: submission.body,
-        user: {
-          ic: submission.user_ic,
-          name: submission.user_name,
-          phoneNo: submission.user_phoneNo,
-          email: submission.user_email,
-          privilege: submission.user_privilege,
-          avatar: submission.user_avatar
-        }
-      }));
+      const formattedSubmissions = response.data.map(
+        (submission: {
+          id: any;
+          subject: any;
+          type: any;
+          tags: string;
+          status: any;
+          datetime: string | number | Date;
+          vote: any;
+          agency: any;
+          body: any;
+          user_ic: any;
+          user_name: any;
+          user_phoneNo: any;
+          user_email: any;
+          user_privilege: any;
+          user_avatar: any;
+        }) => ({
+          id: submission.id,
+          title: submission.subject,
+          type: submission.type,
+          tag: submission.tags[0], // Parse the JSON string and get the first tag
+          status: submission.status,
+          date: new Date(submission.datetime),
+          upvote: submission.vote,
+          agency: submission.agency,
+          body: submission.body,
+          user: {
+            ic: submission.user_ic,
+            name: submission.user_name,
+            phoneNo: submission.user_phoneNo,
+            email: submission.user_email,
+            privilege: submission.user_privilege,
+            avatar: submission.user_avatar,
+          },
+        })
+      );
       setSubmissions(formattedSubmissions);
     } catch (error) {
-      console.error('Error fetching submissions:', error);
+      console.error("Error fetching submissions:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchSubmissions();
   }, []);
@@ -93,7 +113,10 @@ function App() {
                 path="/submission/:id"
                 element={<ViewSubmission></ViewSubmission>}
               ></Route>
-              <Route path="/search/:query" element={<VectorDBHandler/>}></Route>
+              <Route
+                path="/search/:query"
+                element={<VectorDBHandler />}
+              ></Route>
               <Route path="/addSubmission" element={<AddSubmission />} />
               <Route path="*" element={<UnknownPage></UnknownPage>}></Route>
             </Routes>

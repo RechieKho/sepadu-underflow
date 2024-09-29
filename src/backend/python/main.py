@@ -10,6 +10,9 @@ import logging
 import numpy as np
 import lancedb
 
+DEVELOPMENT_SSL_KEYFILE="./key.development.pem"
+DEVELOPMENT_SSL_CERTFILE="./cert.development.pem"
+
 app = FastAPI()
 
 # Setup logging
@@ -420,4 +423,4 @@ async def update_user(user: User):
     
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, ssl_keyfile=DEVELOPMENT_SSL_KEYFILE, ssl_certfile=DEVELOPMENT_SSL_CERTFILE)
