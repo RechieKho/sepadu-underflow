@@ -65,13 +65,19 @@ type SubmissionTableDataGridProps = Omit<
 export interface SubmissionTableProps extends SubmissionTableDataGridProps {
   maxWidth?: Breakpoint | false;
   entries: SubmissionTableEntry[];
+  noGutter?: boolean;
 }
 
 export default function SubmissionTable(props: SubmissionTableProps) {
-  const { maxWidth = "lg", entries } = props;
+  const { maxWidth = "lg", entries, noGutter = false } = props;
 
   return (
-    <Container maxWidth={maxWidth}>
+    <Container
+      maxWidth={maxWidth}
+      sx={{
+        mb: noGutter ? 0 : 3,
+      }}
+    >
       <Paper variant="outlined">
         <DataGrid
           columns={columns}
