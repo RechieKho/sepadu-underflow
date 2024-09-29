@@ -1,8 +1,9 @@
-import { Breakpoint, Chip, Paper } from "@mui/material";
+import { Breakpoint, Button, Chip, Paper } from "@mui/material";
 import { Container } from "@mui/system";
 import "./fonts";
 import { DataGrid, GridColDef, GridColTypeDef } from "@mui/x-data-grid";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const titleColumnType: GridColTypeDef = {
   type: "string",
@@ -45,6 +46,23 @@ const columns: GridColDef[] = [
   { field: "status", headerName: "Status", ...statusColumnType },
   { field: "date", headerName: "Date", ...dateColumnType },
   { field: "upvote", headerName: "Upvote", ...upvoteColumnType },
+  {
+    field: "actions",
+    headerName: "Actions",
+    width: 120,
+    renderCell: (params) => {
+      const navigate = useNavigate();
+      return (
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => navigate(`/submission/${params.row.id}`)}
+        >
+          View
+        </Button>
+      );
+    },
+  },
 ];
 
 export interface SubmissionTableEntry {
@@ -66,10 +84,11 @@ export interface SubmissionTableProps extends SubmissionTableDataGridProps {
   maxWidth?: Breakpoint | false;
   entries: SubmissionTableEntry[];
   noGutter?: boolean;
+  onRowClick?: (params: any) => void;
 }
 
 export default function SubmissionTable(props: SubmissionTableProps) {
-  const { maxWidth = "lg", entries, noGutter = false } = props;
+  const { maxWidth = "lg", entries, noGutter = false, onRowClick } = props;
 
   return (
     <Container
@@ -82,6 +101,7 @@ export default function SubmissionTable(props: SubmissionTableProps) {
         <DataGrid
           columns={columns}
           rows={entries}
+          onRowClick={onRowClick}
           {...(props as SubmissionTableDataGridProps)}
         ></DataGrid>
       </Paper>
