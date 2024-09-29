@@ -119,6 +119,17 @@ async def startup_event():
             ]
         )
 
+        schema2 = pa.schema(
+            [
+                pa.field('user_ic', pa.string()),
+                pa.field('user_name', pa.string()),
+                pa.field('user_phoneNo', pa.string()),
+                pa.field('user_email', pa.string()),
+                pa.field('user_privilege', pa.string()),
+                pa.field('user_avatar', pa.string()),
+            ]
+        )
+
         # Create the table if it doesn't exist
         if "submissions" not in db.table_names():
             table = db.create_table("submissions", schema=schema, mode="overwrite")
@@ -126,6 +137,14 @@ async def startup_event():
             table.create_fts_index(["subject", "body"])
         else:
             table = db.open_table("submissions")
+
+
+        if "user" not in db.table_names():
+            table2 = db.create_table("user", schema=schema2, mode="overwrite")
+            # Create FTS index
+            table2.create_fts_index(["subject", "body"])
+        else:
+            table2 = db.open_table("user")
 
         comments_schema = pa.schema(
             [
@@ -368,6 +387,36 @@ async def query_by_status(status: str):
         logger.error(f"Error querying submissions by status: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
     
+
+@app.put("/update_user")
+async def update_user(user: User):
+    try:
+        # Check if the user exists in the database based on their 'ic'
+        results_df = db.open_table("user").search().where(f"user_ic = '{user.ic}'").limit(1).to_pandas()
+
+        if results_df.empty:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Convert the user details to a dictionary to update the row
+        updated_user_data = {
+            "user_ic": user.ic,
+            "user_name": user.name,
+            "user_phoneNo": user.phoneNo,
+            "user_email": user.email,
+            "user_privilege": user.privilege,
+            "user_avatar": user.avatar
+        }
+
+        # Update the user details in the table
+        db.open_table("user").update(f"user_ic = '{user.ic}'", updated_user_data)
+        logger.info(f"User {user.ic} updated successfully")
+        return {"message": "User updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating user {user.ic}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
     
 if __name__ == "__main__":
     import uvicorn

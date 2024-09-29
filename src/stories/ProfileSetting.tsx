@@ -15,6 +15,7 @@ import { User } from "../models/user";
 import InputAdornment from '@mui/material/InputAdornment';
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
+import axios from "axios";
 
 interface ProfileSettingProps {
   user: User;
@@ -49,22 +50,11 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({
   const [emailError, setEmailError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
 
-  const validateIc = (ic: string): boolean => {
-    const icRegex = /^\d{12}$/;
-    return icRegex.test(ic);
-  };
+  const validateIc = (ic: string): boolean => /^\d{12}$/.test(ic);
+  const validateEmail = (email: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePhoneNo = (phoneNo: string): boolean => /^\d{9,10}$/.test(phoneNo);
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePhoneNo = (phoneNo: string): boolean => {
-    const phoneRegex = /^\d{9,10}$/; 
-    return phoneRegex.test(phoneNo);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const isIcValid = validateIc(ic);
@@ -77,8 +67,19 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({
 
     if (!isIcValid || !isEmailValid || !isPhoneValid) return; 
 
-    const data = new User(ic, name, phoneNo, email, privilege, avatar);
-    onSubmitRequested(data);
+    // Create the updated user object
+    const updatedUser = new User(ic, name, phoneNo, email, privilege, avatar);
+
+    try {
+      // Send the updated user data to the backend
+      const response = await axios.put("/update_user", updatedUser);
+      console.log("Response:", response.data);
+
+      // Notify parent or any other side effect after successful update
+      onSubmitRequested(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
   };
 
   return (
@@ -116,17 +117,14 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({
           <Grid2 container spacing={2}>
             <Grid2 size={4}>
               <Typography variant="body1">
-                <strong>IC No.: </strong>
+                <strong>IC No.:</strong>
               </Typography>
             </Grid2>
             <TextField
               required
-              id="outlined-required"
-              label="Required"
+              label="IC No."
               value={ic}
-              onChange={(e) => {
-                setIc(e.currentTarget.value);
-              }}
+              onChange={(e) => setIc(e.currentTarget.value)}
               error={IcError}
               helperText={IcError ? "Invalid IC format" : ""}
             />
@@ -136,44 +134,42 @@ const ProfileSetting: React.FC<ProfileSettingProps> = ({
           <Grid2 container spacing={2}>
             <Grid2 size={4}>
               <Typography variant="body1">
-                <strong>Phone No.: </strong>
+                <strong>Phone No.:</strong>
               </Typography>
             </Grid2>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              label="Phone No."
               value={phoneNo}
-              slotProps={{
-                input: {
-                  startAdornment: <InputAdornment position="start"><Typography sx={{ color: "black" }}>+60</Typography></InputAdornment>,
-                },
-              }}
-              onChange={(e) => {
-                setPhoneNo(e.currentTarget.value);
+              onChange={(e) => setPhoneNo(e.currentTarget.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Typography sx={{color:'black'}}>
+                      +60
+                    </Typography>
+                  </InputAdornment>
+                ),
               }}
               error={phoneError}
               helperText={phoneError ? "Invalid phone number" : ""}
             />
-          </Grid2>
+          </Grid2>     
         </Stack>
         <Stack sx={{ my: 2 }}>
           <Grid2 container spacing={2}>
             <Grid2 size={4}>
               <Typography variant="body1">
-                <strong>Email: </strong>
+                <strong> Email:</strong>
               </Typography>
             </Grid2>
             <TextField
-              id="outlined-basic"
-              variant="outlined"
+              label="Email"
               value={email}
-              onChange={(e) => {
-                setEmail(e.currentTarget.value);
-              }}
+              onChange={(e) => setEmail(e.currentTarget.value)}
               error={emailError}
               helperText={emailError ? "Invalid email format" : ""}
             />
-          </Grid2>
+          </Grid2>   
         </Stack>
         <Divider sx={{ borderBottomWidth: 3, borderColor: "gray", my: 1 }} />
         <Stack
