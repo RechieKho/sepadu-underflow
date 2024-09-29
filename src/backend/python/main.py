@@ -129,11 +129,16 @@ async def startup_event():
 
         comments_schema = pa.schema(
             [
-                pa.field("id", pa.int32()),  
-                pa.field("user_ic", pa.string()),  
-                pa.field("postedAt", pa.string()),  
-                pa.field("comment", pa.string()),  
-                pa.field("submission_id", pa.string())  
+                pa.field("id", pa.int32()),
+                pa.field("user_ic", pa.string()),
+                pa.field("user_name", pa.string()),
+                pa.field("user_phoneNo", pa.string()),
+                pa.field("user_email", pa.string()),
+                pa.field("user_privilege", pa.string()),
+                pa.field("user_avatar", pa.string()),
+                pa.field("postedAt", pa.string()),
+                pa.field("comment", pa.string()),
+                pa.field("submission_id", pa.string())
             ]
         )
 
@@ -163,11 +168,14 @@ async def add_submission(submission: Submission):
 @app.post("/add_comment")
 async def add_comment(comment: Comment):
     try:
-        # posted_at = datetime.now().isoformat()
-
         comment_data = {
             "id": None,  
-            "user_ic": comment.user.ic,  
+            "user_ic": comment.user.ic,
+            "user_name": comment.user.name,
+            "user_phoneNo": comment.user.phoneNo,
+            "user_email": comment.user.email,
+            "user_privilege": comment.user.privilege,
+            "user_avatar": comment.user.avatar,
             "postedAt": comment.postedAt,  
             "comment": comment.comment,
             "submission_id": comment.submission_id  
@@ -180,6 +188,35 @@ async def add_comment(comment: Comment):
         logger.error(f"Error adding comment: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
     
+
+@app.get("/comments/{submission_id}")
+async def get_comments(submission_id: str):
+    try:
+        # Perform the search and convert results to a pandas DataFrame
+        results_df = comments_table.search().where(f"submission_id = '{submission_id}'").to_pandas()
+
+        comments = []
+        for _, row in results_df.iterrows():
+            comment = Comment(
+                user=User(
+                    ic=row['user_ic'],
+                    name=row['user_name'],
+                    phoneNo=row['user_phoneNo'],
+                    email=row['user_email'],
+                    privilege=row['user_privilege'],
+                    avatar=row['user_avatar']
+                ),
+                postedAt=row['postedAt'],
+                comment=row['comment'],
+                submission_id=row['submission_id']
+            )
+            comments.append(comment)
+
+        return comments
+    except Exception as e:
+        logger.error(f"Error retrieving comments for submission {submission_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @app.get("/vector_search")
 async def vector_search(query: str, limit: int = 5):
@@ -257,6 +294,44 @@ async def hybrid_search(query: str, limit: int = 5):
         logger.error(f"Error performing hybrid search: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.get("/submission/{submission_id}")
+async def get_submission_by_id(submission_id: str):
+    try:
+        # Perform the search and convert results to a pandas DataFrame
+        results_df = table.search().where(f"id = '{submission_id}'").limit(1).to_pandas()
+
+        if results_df.empty:
+            raise HTTPException(status_code=404, detail="Submission not found")
+
+        row = results_df.iloc[0]
+        submission = Submission(
+            id=row['id'],
+            type=row['type'],
+            subject=row['subject'],
+            body=row['body'],
+            datetime=row['datetime'],
+            agency=row['agency'],
+            tags=json.loads(row['tags']),
+            status=row['status'],
+            user=User(
+                ic=row['user_ic'],
+                name=row['user_name'],
+                phoneNo=row['user_phoneNo'],
+                email=row['user_email'],
+                privilege=row['user_privilege'],
+                avatar=row['user_avatar']
+            ),
+            vote=row['vote']
+        )
+
+        return submission
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error querying submission by ID: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+    
 
 @app.get("/query_by_status")
 async def query_by_status(status: str):
