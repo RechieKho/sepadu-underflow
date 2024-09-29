@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import SubmissionDetails from "./stories/SubmissionDetails";
 import SubmissionThread from "./stories/SubmissionThread";
 import { Submission } from "./models/submission";
 import { User } from "./models/user";
-import axios from 'axios';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import axios from "axios";
+import { TextField, Button, Box, Typography } from "@mui/material";
 
 interface Comment {
   id: string;
@@ -18,7 +18,7 @@ export default function ViewSubmission() {
   const { id } = useParams();
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,8 +26,8 @@ export default function ViewSubmission() {
     const fetchSubmissionAndComments = async () => {
       try {
         const [submissionResponse, commentsResponse] = await Promise.all([
-          axios.get(`http://localhost:8000/submission/${id}`),
-          axios.get(`http://localhost:8000/comments/${id}`)
+          axios.get(`https://localhost:8000/submission/${id}`),
+          axios.get(`https://localhost:8000/comments/${id}`),
         ]);
 
         const submissionData = submissionResponse.data;
@@ -66,13 +66,13 @@ export default function ViewSubmission() {
             comment.user.avatar
           ),
           postedAt: comment.postedAt,
-          content: comment.comment
+          content: comment.comment,
         }));
 
         setComments(formattedComments);
         setLoading(false);
       } catch (err) {
-        setError('Error fetching submission details and comments');
+        setError("Error fetching submission details and comments");
         setLoading(false);
       }
     };
@@ -82,27 +82,32 @@ export default function ViewSubmission() {
 
   const handleVote = async (id: any, direction: string) => {
     try {
-      const response = await axios.put(`http://localhost:8000/submission/${id}/vote`, {
-        vote_change: direction === 'up' ? 1 : -1
-      });
-      console.log('Vote updated:', response.data);
+      const response = await axios.put(
+        `https://localhost:8000/submission/${id}/vote`,
+        {
+          vote_change: direction === "up" ? 1 : -1,
+        }
+      );
+      console.log("Vote updated:", response.data);
       // Update the local state
       if (submission) {
-        setSubmission(new Submission(
-          submission.id,
-          submission.type,
-          submission.subject,
-          submission.body,
-          submission.datetime,
-          submission.agency,
-          submission.tags,
-          submission.status,
-          submission.user,
-          response.data.new_vote
-        ));
+        setSubmission(
+          new Submission(
+            submission.id,
+            submission.type,
+            submission.subject,
+            submission.body,
+            submission.datetime,
+            submission.agency,
+            submission.tags,
+            submission.status,
+            submission.user,
+            response.data.new_vote
+          )
+        );
       }
     } catch (error) {
-      console.error('Error updating vote:', error);
+      console.error("Error updating vote:", error);
     }
   };
 
@@ -111,24 +116,24 @@ export default function ViewSubmission() {
     if (!newComment.trim() || !submission) return;
 
     try {
-      const response = await axios.post('http://localhost:8000/add_comment', {
+      const response = await axios.post("https://localhost:8000/add_comment", {
         user: submission.user,
         postedAt: new Date().toISOString(),
         comment: newComment,
-        submission_id: submission.id
+        submission_id: submission.id,
       });
 
       const addedComment: Comment = {
         id: response.data.id,
         user: submission.user,
         postedAt: new Date().toISOString(),
-        content: newComment
+        content: newComment,
       };
 
       setComments([...comments, addedComment]);
-      setNewComment('');
+      setNewComment("");
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error("Error adding comment:", error);
     }
   };
 
@@ -138,11 +143,10 @@ export default function ViewSubmission() {
 
   return (
     <Box>
-      <SubmissionDetails
-        submission={submission}
-        onVote={handleVote}
-      />
-      <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>Comments</Typography>
+      <SubmissionDetails submission={submission} onVote={handleVote} />
+      <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
+        Comments
+      </Typography>
       <SubmissionThread comments={comments} />
       <Box component="form" onSubmit={handleCommentSubmit} sx={{ mt: 3 }}>
         <TextField

@@ -1,36 +1,38 @@
-import React, { useState } from 'react';
-import { Button, TextField, Typography, Grid, Container } from '@mui/material';
-import { Submission } from '../models/submission';
-import { Privilege, User } from '../models/user';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Button, TextField, Typography, Grid, Container } from "@mui/material";
+import { Submission } from "../models/submission";
+import { Privilege, User } from "../models/user";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddSubmission: React.FC = () => {
   const navigate = useNavigate();
   const [submissionInput, setSubmissionInput] = useState({
-    type: 'Aduan',
-    subject: '',
-    body: '',
-    agency: '',
-    tags: '',
-    userIc: '012345',
-    userName: 'SSYOK',
-    userPhone: '012345678',
-    userEmail: 'ssyok@example.com',
-    userPrivilege: 'community',
+    type: "Aduan",
+    subject: "",
+    body: "",
+    agency: "",
+    tags: "",
+    userIc: "012345",
+    userName: "SSYOK",
+    userPhone: "012345678",
+    userEmail: "ssyok@example.com",
+    userPrivilege: "community",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setSubmissionInput(prev => ({ ...prev, [name]: value }));
+    setSubmissionInput((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAddSubmission = async () => {
     // Check if all fields are filled
-    const isFormValid = Object.values(submissionInput).every(value => value.trim() !== '');
+    const isFormValid = Object.values(submissionInput).every(
+      (value) => value.trim() !== ""
+    );
 
     if (!isFormValid) {
-      alert('Please fill in all fields');
+      alert("Please fill in all fields");
       return;
     }
 
@@ -41,8 +43,8 @@ const AddSubmission: React.FC = () => {
       submissionInput.body,
       new Date().toISOString(),
       submissionInput.agency,
-      submissionInput.tags.split(',').map(tag => tag.trim()),
-      'Open',
+      submissionInput.tags.split(",").map((tag) => tag.trim()),
+      "Open",
       new User(
         submissionInput.userIc,
         submissionInput.userName,
@@ -54,18 +56,20 @@ const AddSubmission: React.FC = () => {
     );
 
     try {
-      await axios.post('http://localhost:8000/add_submission', newSubmission);
-      alert('Submission added successfully');
-      navigate('/'); // Navigate back to root page after successful submission
+      await axios.post("https://localhost:8000/add_submission", newSubmission);
+      alert("Submission added successfully");
+      navigate("/"); // Navigate back to root page after successful submission
     } catch (error) {
-      console.error('Error adding submission:', error);
-      alert('Failed to add submission');
+      console.error("Error adding submission:", error);
+      alert("Failed to add submission");
     }
   };
 
   return (
     <Container maxWidth="md">
-      <Typography variant="h4" gutterBottom>Add New Submission</Typography>
+      <Typography variant="h4" gutterBottom>
+        Add New Submission
+      </Typography>
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <TextField
@@ -164,7 +168,11 @@ const AddSubmission: React.FC = () => {
           />
         </Grid>
       </Grid>
-      <Button variant="contained" onClick={handleAddSubmission} style={{ margin: '20px 0' }}>
+      <Button
+        variant="contained"
+        onClick={handleAddSubmission}
+        style={{ margin: "20px 0" }}
+      >
         Add Submission
       </Button>
     </Container>

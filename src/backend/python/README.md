@@ -5,11 +5,13 @@ This project implements a vector search API using FastAPI and LanceDB.
 ## Setup and Installation
 
 1. Create a virtual environment:
+
 ```
 python -m venv venv
 ```
 
 2. Activate the virtual environment:
+
 - On Windows:
   ```
   venv\Scripts\activate
@@ -20,6 +22,7 @@ python -m venv venv
   ```
 
 3. Install the required packages:
+
 ```
 pip install -r requirements.txt
 ```
@@ -27,12 +30,13 @@ pip install -r requirements.txt
 ## Running the Application
 
 1. Start the FastAPI server:
+
 ```
 python main.py
 ```
 
 2. Open your web browser and go to:
-[http://localhost:8000/docs](http://localhost:8000/docs)
+   [https://localhost:8000/docs](https://localhost:8000/docs)
 
 This will open the Swagger UI where you can interact with the API and see its documentation.
 
