@@ -30,6 +30,7 @@ const meta = {
     maxWidth: "sm",
     user,
     onAddRequested: fn(),
+    onEditUserRequested: fn(),
   },
 } satisfies Meta<typeof UserBar>;
 
