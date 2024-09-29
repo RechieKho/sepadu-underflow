@@ -18,6 +18,7 @@ export interface CounterProps {
   maxWidth?: Breakpoint;
   user: User;
   onAddRequested: () => void;
+  onEditUserRequested: () => void;
 }
 
 const UserInfo = styled(Box)(({ theme }) => ({
@@ -41,6 +42,7 @@ export default function UserBar({
   maxWidth = "lg",
   user,
   onAddRequested,
+  onEditUserRequested,
 }: CounterProps) {
   return (
     <Container maxWidth={maxWidth}>
@@ -52,7 +54,7 @@ export default function UserBar({
             alignItems: "center",
           }}
         >
-          <UserInfo>
+          <UserInfo onClick={() => onEditUserRequested()}>
             <Avatar src={user.avatar} alt={user.name} />
             <Username variant="body1">{user.name}</Username>
             {user.privilege === "admin" && (
