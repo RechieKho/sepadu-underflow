@@ -5,20 +5,41 @@ import {
   Paper,
   Stack,
   Typography,
+  Avatar,
+  Box,
+  Chip,
 } from "@mui/material";
 import "./fonts";
-import React from "react";
 import { Add } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
+import { User } from "../models/user";
 
 export interface CounterProps {
   maxWidth?: Breakpoint;
-  userName: string;
+  user: User;
   onAddRequested: () => void;
 }
 
+const UserInfo = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  marginRight: theme.spacing(2),
+}));
+
+const Username = styled(Typography)(({ theme }) => ({
+  fontWeight: "bold",
+  marginLeft: theme.spacing(1),
+}));
+
+const AdminChip = styled(Chip)(({ theme }) => ({
+  marginLeft: theme.spacing(1),
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+}));
+
 export default function UserBar({
   maxWidth = "lg",
-  userName,
+  user,
   onAddRequested,
 }: CounterProps) {
   return (
@@ -31,7 +52,13 @@ export default function UserBar({
             alignItems: "center",
           }}
         >
-          <Typography>{userName}</Typography>
+          <UserInfo>
+            <Avatar src={user.avatar} alt={user.name} />
+            <Username variant="body1">{user.name}</Username>
+            {user.privilege === "admin" && (
+              <AdminChip label="Admin" size="small" />
+            )}
+          </UserInfo>
           <IconButton
             onClick={() => onAddRequested()}
             aria-label="Add a submission"
